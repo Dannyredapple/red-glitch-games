@@ -10,33 +10,53 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as JuegosIndexRouteImport } from './routes/juegos.index'
+import { Route as JuegosSlugRouteImport } from './routes/juegos.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JuegosIndexRoute = JuegosIndexRouteImport.update({
+  id: '/juegos/',
+  path: '/juegos/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JuegosSlugRoute = JuegosSlugRouteImport.update({
+  id: '/juegos/$slug',
+  path: '/juegos/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/juegos/$slug': typeof JuegosSlugRoute
+  '/juegos/': typeof JuegosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/juegos/$slug': typeof JuegosSlugRoute
+  '/juegos': typeof JuegosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/juegos/$slug': typeof JuegosSlugRoute
+  '/juegos/': typeof JuegosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/juegos/$slug' | '/juegos/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/juegos/$slug' | '/juegos'
+  id: '__root__' | '/' | '/juegos/$slug' | '/juegos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  JuegosSlugRoute: typeof JuegosSlugRoute
+  JuegosIndexRoute: typeof JuegosIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +68,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/juegos/': {
+      id: '/juegos/'
+      path: '/juegos'
+      fullPath: '/juegos/'
+      preLoaderRoute: typeof JuegosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/juegos/$slug': {
+      id: '/juegos/$slug'
+      path: '/juegos/$slug'
+      fullPath: '/juegos/$slug'
+      preLoaderRoute: typeof JuegosSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  JuegosSlugRoute: JuegosSlugRoute,
+  JuegosIndexRoute: JuegosIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
